@@ -1,15 +1,72 @@
-import React from 'react'
+import React, { useState } from 'react'
 import img from '../../img/img_login.png'
 import img2 from '../../img/img_fromlogin.png'
 import { Button, Checkbox, Form, Input } from 'antd';
+import axios from 'axios'; // Thêm import axios
+
 
 export default function FormLogin() {
     const onFinish = (values) => {
-        console.log('Success:', values);
+        var fullName = values.fullName 
+        var MatKhau = values.password
+        var TenUser = values.username
+        var remk = values.rePassword
+        
+        if(MatKhau !=  remk){
+            console.log('Failed:',values);
+        }else{
+            console.log('Success:', values);
+            var taikhoan = {
+                fullName : fullName,
+                MatKhau : MatKhau,
+                TenUser : TenUser,
+            }
+            axios({
+                url: `${apiUrl}/food`,
+                method: "POST",
+                data: taikhoan,
+              })
+                .then(function (res) {
+                    console.log('thành công')
+                })
+                .catch(function (err) {
+                  console.log(`  🚀: themMonAn -> err`, err);
+                });
+        }
       };
+    
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
       };
+    
+    const onFinish2 = (values) => {
+        var MatKhau = values.password
+        var TenUser = values.username
+        console.log('Success:', MatKhau);
+        axios({
+            url: `${apiUrl}/food`,
+            method: "GET",
+          })
+            .then(function (res) {
+                const userlist = res.data
+                const user = userlist.find((user) => user.TenUser === TenUser && user.MatKhau === MatKhau);
+                if (user) {
+                    console.log('Đăng nhập thành công');
+                    // Đăng nhập thành công, thực hiện các hành động sau khi đăng nhập thành công
+                    
+                } else {
+                    console.log('Đăng nhập thất bại');
+                    // Xử lý khi đăng nhập thất bại
+                }
+            })
+            .catch(function (err) {
+              console.log(`  🚀: err`, err);
+            });
+
+      };
+    const onFinishFailed2 = (errorInfo) => {
+        console.log('Failed:', errorInfo);
+      };    
     const handleChangeLogin = () =>{
         const bannerLogin = document.getElementById('banner-login');
         bannerLogin.style.transform = 'translateX(0px)'
@@ -18,6 +75,27 @@ export default function FormLogin() {
         const bannerLogin = document.getElementById('banner-login');
         bannerLogin.style.transform = 'translateX(100%)'
     }
+
+    const apiUrl = 'https://63b2c9aa5901da0ab36dbd06.mockapi.io'; 
+
+    function fetchData(){
+        axios({
+            url: `${apiUrl}/food`,
+            method: "GET",
+          })
+            .then(function (res) {
+              console.log('thành công')
+            })
+            .catch(function (err) {
+              console.log(`  🚀: err`, err);
+            });
+    }
+
+
+    
+    
+
+        
   return (
     <div
         style={{
@@ -80,8 +158,8 @@ export default function FormLogin() {
             initialValues={{
             remember: true,
             }}
-            onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
+            onFinish={onFinish2}
+            onFinishFailed={onFinishFailed2}
             autoComplete="off"
         >
             <Form.Item
@@ -174,6 +252,20 @@ export default function FormLogin() {
             onFinishFailed={onFinishFailed}
             autoComplete="off"
         >
+
+            <Form.Item
+            label="fullName"
+            name="fullName"
+            rules={[
+                {
+                required: true,
+                message: 'Please input your name!',
+                },
+            ]}
+            >
+            <Input />
+            </Form.Item>
+
             <Form.Item
             label="Username"
             name="username"
@@ -201,15 +293,19 @@ export default function FormLogin() {
             </Form.Item>
 
             <Form.Item
-            name="remember"
-            valuePropName="checked"
-            wrapperCol={{
-                offset: 8,
-                span: 16,
-            }}
+            label="RePassword"
+            name="rePassword"
+            rules={[
+                {
+                required: true,
+                message: 'Please input your password!',
+                },
+            ]}
             >
-            <Checkbox>Remember me</Checkbox>
+            <Input.Password />
             </Form.Item>
+
+            
 
             <Form.Item
             wrapperCol={{
@@ -217,7 +313,8 @@ export default function FormLogin() {
                 span: 16,
             }}
             >
-            <Button type="primary" htmlType="submit">
+            <Button
+                type="primary" htmlType="submit">
                 Submit
             </Button>
             </Form.Item>
