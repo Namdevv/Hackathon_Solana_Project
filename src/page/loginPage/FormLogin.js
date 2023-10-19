@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import img from '../../img/img_login.png'
-import img2 from '../../img/img_fromlogin.png'
+import img from '../../img/Japan_gate_water.jpg'
+import img2 from '../../img/Japan_gate_water.jpg'
 import { Button, Checkbox, Form, Input } from 'antd';
 import axios from 'axios'; // Thêm import axios
 
@@ -112,12 +112,13 @@ export default function FormLogin() {
       <div
         style={{
             position:'relative',
-            backgroundColor : 'white',
+            backgroundColor : 'rgba(255, 255, 255, 0.2)',
             width : '60%',
             height : '70%',
             display : 'flex',
             borderRadius : '5%',
             overflow : 'hidden',
+            boxShadow: '5px 5px 10px rgba(0, 0, 0, 0.5)',
         }}
       >
         {/* from login */}
