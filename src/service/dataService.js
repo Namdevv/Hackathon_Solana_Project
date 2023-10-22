@@ -8,7 +8,7 @@ export const movieServ = {
   getMovieByTheater: () => {
     return https.get(`${BASE_URL}/`);
   },
-  getDetailMovie: (maPhim) => {
+  getDetailMovie: () => {
     return https.get(`/`);
   },
 };

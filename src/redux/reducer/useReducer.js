@@ -1,4 +1,4 @@
-import { localUserServ } from "../../service/localService";
+import { localUserServ } from "../../service/localUserServ";
 import { USER_LOGIN } from "../contant/userContant";
 
 const initialState = {

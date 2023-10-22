@@ -1,5 +1,5 @@
 import React from 'react'
-import img from '../../img/Japan_gate_water.jpg'
+import img from '../../img/img_login.png'
 import { NavLink } from 'react-router-dom'
 
 export default function LoginPage() {

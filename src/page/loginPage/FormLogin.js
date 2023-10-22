@@ -1,37 +1,41 @@
 import React, { useState } from 'react'
-import img from '../../img/Japan_gate_water.jpg'
-import img2 from '../../img/Japan_gate_water.jpg'
-import { Button, Checkbox, Form, Input } from 'antd';
-import axios from 'axios'; // Thêm import axios
+import img from '../../img/img_login.png'
+import img2 from '../../img/img_fromlogin.png'
+import { Button, Checkbox, Form, Input, message } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import { userServ } from '../../service/userServ';
+import { localUserServ } from '../../service/localUserServ';
+import { useDispatch } from 'react-redux';
+import {setLoginAction, setSignUpAction } from '../../redux/action/userAction'
+
 
 
 export default function FormLogin() {
+    let navigate = useNavigate();
+    let dispatch = useDispatch();
     const onFinish = (values) => {
-        var fullName = values.fullName 
         var MatKhau = values.password
-        var TenUser = values.username
-        var remk = values.rePassword
+        var remk = document.getElementById('repassword').value
+        console.log(remk);
         
         if(MatKhau !=  remk){
             console.log('Failed:',values);
         }else{
-            console.log('Success:', values);
-            var taikhoan = {
-                fullName : fullName,
-                MatKhau : MatKhau,
-                TenUser : TenUser,
-            }
-            axios({
-                url: `${apiUrl}/food`,
-                method: "POST",
-                data: taikhoan,
-              })
-                .then(function (res) {
-                    console.log('thành công')
-                })
-                .catch(function (err) {
-                  console.log(`  🚀: themMonAn -> err`, err);
-                });
+            userServ.postSignUp(values)
+                    .then((res) => {
+                        message.success("SignUp thành công");
+                        // lưu thông tin user vào localStorage
+                        localUserServ.set(res.data);
+                        dispatch(setSignUpAction(
+                            res.data.content
+                        ));
+                        navigate("/");
+                        console.log(res)
+                    })
+                    .catch((err) => {
+                        message.error("đăng kí thất bại");
+                        console.log(err);
+                    })
         }
       };
     
@@ -40,29 +44,23 @@ export default function FormLogin() {
       };
     
     const onFinish2 = (values) => {
-        var MatKhau = values.password
-        var TenUser = values.username
-        console.log('Success:', MatKhau);
-        axios({
-            url: `${apiUrl}/food`,
-            method: "GET",
-          })
-            .then(function (res) {
-                const userlist = res.data
-                const user = userlist.find((user) => user.TenUser === TenUser && user.MatKhau === MatKhau);
-                if (user) {
-                    console.log('Đăng nhập thành công');
-                    // Đăng nhập thành công, thực hiện các hành động sau khi đăng nhập thành công
-                    
-                } else {
-                    console.log('Đăng nhập thất bại');
-                    // Xử lý khi đăng nhập thất bại
-                }
-            })
-            .catch(function (err) {
-              console.log(`  🚀: err`, err);
-            });
-
+        userServ.postLogin(values)
+                .then((res) =>{
+                    message.success("Login succes");
+                    // lưu vào localstorage
+                    console.log('User data:', res.data.content);
+                    localUserServ.set(res.data);
+                    dispatch(setLoginAction(
+                        res.data.content
+                    ));
+                    navigate("/home")
+                    console.log(res);
+                })
+                .catch((err) =>{
+                    message.error("login failed")
+                    console.log(err)
+                })
+        
       };
     const onFinishFailed2 = (errorInfo) => {
         console.log('Failed:', errorInfo);
@@ -75,23 +73,6 @@ export default function FormLogin() {
         const bannerLogin = document.getElementById('banner-login');
         bannerLogin.style.transform = 'translateX(100%)'
     }
-
-    const apiUrl = 'https://63b2c9aa5901da0ab36dbd06.mockapi.io'; 
-
-    function fetchData(){
-        axios({
-            url: `${apiUrl}/food`,
-            method: "GET",
-          })
-            .then(function (res) {
-              console.log('thành công')
-            })
-            .catch(function (err) {
-              console.log(`  🚀: err`, err);
-            });
-    }
-
-
     
     
 
@@ -112,13 +93,12 @@ export default function FormLogin() {
       <div
         style={{
             position:'relative',
-            backgroundColor : 'rgba(255, 255, 255, 0.2)',
+            backgroundColor : 'white',
             width : '60%',
             height : '70%',
             display : 'flex',
             borderRadius : '5%',
             overflow : 'hidden',
-            boxShadow: '5px 5px 10px rgba(0, 0, 0, 0.5)',
         }}
       >
         {/* from login */}
@@ -190,7 +170,6 @@ export default function FormLogin() {
             </Form.Item>
 
             <Form.Item
-            name="remember"
             valuePropName="checked"
             wrapperCol={{
                 offset: 8,
@@ -295,7 +274,7 @@ export default function FormLogin() {
 
             <Form.Item
             label="RePassword"
-            name="rePassword"
+            
             rules={[
                 {
                 required: true,
@@ -303,7 +282,7 @@ export default function FormLogin() {
                 },
             ]}
             >
-            <Input.Password />
+            <Input.Password id='repassword' />
             </Form.Item>
 
             

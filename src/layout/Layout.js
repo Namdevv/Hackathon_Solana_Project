@@ -1,15 +1,140 @@
 import React from "react";
-// import Footer from "../Components/Footer/Footer";
-// import Header from "../Components/Header/Header";
+import { useSelector } from 'react-redux'
+import { localUserServ } from '../service/localUserServ';
+import { Input, Space } from 'antd';
+import { NavLink } from 'react-router-dom';
 
 export default function Layout({ Component }) {
+  let userInfo = useSelector((state) => {
+    return state.userReducer.userInfor;
+  })
+  console.log(userInfo)
+  let handleLogout = () => {
+    localUserServ.remove();
+    window.location.reload();
+    // window.location.href="/login";
+  }
+  const { Search } = Input;
+  let renderContent = () => {
+    if(userInfo){
+      return(
+        <div
+          style={{
+            background: 'linear-gradient(to bottom, #cdffd8, #94b9ff)',
+            width: '100%',
+            height: '100vh',
+            padding : '20px'
+          }}
+        >
+          {/* navbar menu */}
+          <div
+            style={{
+              display : 'flex',
+            }}
+          >
+            <div
+              style={{
+                height : '94vh',
+                backgroundColor : 'white',
+                borderRadius : '20px',
+                display : 'flex',
+                flexDirection : 'column',
+                justifyContent :'space-between',
+              }}
+            >
+              {/* icon trên */}
+              <div
+                style={{
+                  display : 'flex',
+                  flexDirection :'column',
+                  justifyContent : 'center',
+                  alignItems : 'center',
+                  fontSize : '24px',
+                  
+                }}
+              >
+                <NavLink to={''}>
+                  <i class="fa fa-home"></i>
+                </NavLink>
+                <NavLink to={''}>
+                  <i class="fa fa-star"></i>
+                </NavLink>
+                <NavLink to={''}>
+                  <i class="fa fa-users"></i> 
+                </NavLink>
+                <NavLink to={''}>
+                  <i class="fa fa-book-open"></i>
+                </NavLink>
+                <NavLink to={''}>
+                  <i class="fa fa-medal"></i>
+                </NavLink>
+                <NavLink to={''}>
+                  <i class="fa fa-cog"></i>
+                </NavLink>
+              </div>
+              {/* icon dưới */}
+          <div
+                style={{
+                  display: 'flex',
+                  justifyContent : 'center',
+                  margin : '10px 0'
+                }}
+              >
+                <img
+                  style={{
+                    width : '60%',
+                    borderRadius : '50%',
+
+                  }}
+                src={userInfo[0].avtImg} alt={userInfo[0].avtImg} />
+              </div>
+              </div>
+              <div
+                style={{
+                  margin : '0 0 0 20px',
+                  width : '100%'
+                }}
+              >
+                <div
+                  style={{
+                    display : 'flex',
+                    justifyContent : 'space-between'
+                  }}
+                >
+                  <h3
+                    style={{
+                      margin : '10px'
+                    }}
+                  > 
+                    HELLO {userInfo[0].fullName}
+                    
+                  </h3>
+                  <Space.Compact>
+                    <Search  placeholder="input search text" allowClear />
+                  </Space.Compact>
+                  {/* icon */}
+                  <div>
+                    <i class="fa fa-shopping-cart"></i>
+                    <i class="fa fa-bell"></i>
+                  </div>
+                </div>
+                <div
+                  style={{
+                    width: '100%',
+                  }}
+                >
+                  <Component />
+                </div>
+              </div>
+          </div>
+         
+        </div>
+      )
+    }
+  }
   return (
-    <div className="min-h-screen h-full flex flex-col space-y-10">
-      {/* <Header />  */}
-      <div className="flex-grow">
-        <Component />
-      </div>
-      {/* <Footer /> */}
-    </div>
-  );
+    <>
+      {renderContent()}
+    </>
+  )
 }

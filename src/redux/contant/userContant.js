@@ -1,4 +1,5 @@
 export const USER_LOGIN = "USER_LOGIN";
+export const USER_SIGNUP = "USER_SIGNUP";
 
 // 1 : cho thêm case ở userReducer
 
